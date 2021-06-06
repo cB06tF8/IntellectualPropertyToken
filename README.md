@@ -1,5 +1,6 @@
 # Intellectual Property Token
- This project consists of 3 contracts which work together:
+ This project consists of 3 contracts which work together
+ 
 ### IntelPropertyNFT.sol
  An ERC721Enumerable contract which issues NFTs and tracks basic onchain data about a piece of intellectual property.
 ### IntelPropertyTokens.sol
@@ -16,4 +17,7 @@
  
  
 ## Known Issues
+ - Please notes that this project is a learning project for me - I am still inexperienced at writing smart contracts.  
+ - This project should not be considered production ready. It should be audited before being deployed outside of a testnet.
+ - Some of the information I'm tracking on chain may be better handled off chain. I've attempted to create some efficienies in gas and resource usage by writing to the event logs when I could and also by storing IPFS hash information as efficient as I know how.
  
