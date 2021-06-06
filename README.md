@@ -1,5 +1,6 @@
 # Intellectual Property Token
- This project consists of 3 contracts which work together. They track the specifics about pieces of intellectual property, their location in IPFS and information about each piece's rights holders.
+ Multiple contracts which work together to track rightsHolder information of intellectual property represented by an NFT. Multiple rightsHolders can exist for each piece of intellectual property.
+ The project consists of 3 contracts which track the specifics about pieces of intellectual property, their location in IPFS and information about each piece's rights holders using a combination of an NFT and a secondary ERC20 token.
  
 ### IntelPropertyNFT.sol
  An ERC721Enumerable contract which issues NFTs and tracks basic on chain data about a piece of intellectual property.
