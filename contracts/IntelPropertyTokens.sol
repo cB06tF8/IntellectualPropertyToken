@@ -5,6 +5,14 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+/** @title IntelPropertyTokens.sol is an ERC20 token smart contract handling Intellectual Property. 
+  * @author Chris Ball
+  * @notice This contract is an ERC20 token that works in conjuction with the IntelPropertyNFT (ERC721) contract. 
+  * This contract tracks the IPFS hash address of the intellectual property (for instance, an art or music file) 
+  * and the rightsHolder information for each piece (represented by the nftID issued by the IntelPropertyNFT contract). 
+  * Tokens are minted in batches of 1000 (see intelPropertyTokenLimit) and issued to the rightsHolders of the 
+  * NFT/Intellectual Property file. Each batch belongs to one NFT and the rightsHolders who own the rights to it.
+*/
 contract IntelPropertyTokens is ERC20, Ownable {
 	mapping (uint => IntelPropertyFile) intelPropertyFile; /** @dev nftIndex => intelPropertyFile (nftIndex => Mulithash is covered by this mapping)  */
 	uint totalIntelPropertyFiles; /** @dev total of all IntelProperty files in the contract */
