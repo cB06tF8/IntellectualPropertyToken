@@ -7,10 +7,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /** @title IntelPropertyNFT.sol is an ERC721 token smart contract handling Intellectual Property. 
   * @author Chris Ball
-  * @notice This contract is an ERC721 token derived from ERC721Enumerable.sol. It works in conjuction with 
-  * the IntelPropertyTokens contract, which tracks rightsHolder information for each NFT. There is also an 
-  * optional IntelPropertyAgreement contract which all rightsHolders (and the NFT's contract owner) can use 
-  * to keep all parties on the same page. 
+  * @notice This contract is an ERC721 token derived from ERC721Enumerable.sol. It works in conjuction with the IntelPropertyTokens contract, 
+  * which tracks rightsHolder information for each NFT. There is also an optional IntelPropertyAgreement contract which all rightsHolders 
+  * (and the NFT's contract owner) can use to keep all parties on the same page. This contract contains information such as the name of the
+  * piece of intellectual property, it's artist name, a collection name, an IPFS hash address to a piece of thumbnail art associated with the 
+  * NFT and a list of timestamps of 'plays', for musical art (or 'views' for visual art, if you like) that can be used in off chain reports.
 */
 contract IntelPropertyNFT is ERC721Enumerable, Ownable {
  
@@ -46,7 +47,6 @@ contract IntelPropertyNFT is ERC721Enumerable, Ownable {
 
 	/** @notice function wraps the ERC721 mint function and sets basic human readable info for the NFT */
 	function mint(bytes32 _name, bytes32 _artist, bytes32 _collection) external onlyOwner { 	  
-	//function mint(string memory _name, string memory _artist, string memory _collection) external onlyOwner {
 	  
 	  uint nextNFT = totalSupply(); // totalSupply is 1 based, _mint is 0 based which works well for setting the next index
 	  _mint(msg.sender, nextNFT);
