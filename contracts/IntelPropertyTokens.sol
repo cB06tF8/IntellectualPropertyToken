@@ -25,23 +25,22 @@ contract IntelPropertyTokens is ERC20, Ownable {
 
 	/* TODO
 	 * 1. Normal ERC20 transfer functions may need to be overridden so they don't work from external.
-	 * 2. Do we need a fallback func? How should this contract revieve funds (being part of what will 
-	 * probably be a layer 2 solution). ??
+	 * 2. Do we need a fallback func? How should this contract deal with the possibility of possibly
+	 * receiving funds, (being that it will probably be part of what will be a layer 2 solution)?
 	 * 3. Some kind of escrow feature or status may be needed (to hold tokens for a right's holder 
 	 * before their account exists, should an admin set up the contract before getting all parties
 	 * onboarded).
 	 * 4. 'onlyOwner' needs to be replaced with a whitelist of (probably) the owner + an 'admin' for
 	 * the tokens associated with the specific nftID.
-	 * 
+	 * 5. Owner may eventually reliquish all rights to the admin who uploads an intelProperty file.
 	*/
-    constructor() ERC20("IntellectualPropertyToken", "IPT") { 
-		// when this gets called, will it be the person's addr who is minting or the parent contract's addr?
+    	constructor() ERC20("IntellectualPropertyToken", "IPT") { 
 		admin = msg.sender;
 	}
     
-    struct IntelPropertyFile {
+    	struct IntelPropertyFile {
 		address admin;
-        Multihash ipfsHash;
+        	Multihash ipfsHash;
 		bool active;
 		bool finalized;
 		RightsHolderSpec[] rightsHolderSpecs; 
@@ -60,15 +59,17 @@ contract IntelPropertyTokens is ERC20, Ownable {
     
 	event ipfsHashSetToNFT (uint indexed nftID, bytes32 digest, uint8 hashFunction, uint8 size);
 
-	/** @notice  */
+	/** @notice method adds the IPFS hash address & rightsHolder info to the contract specific to the incoming _nftID (see IntelPropertyNFT.sol for more info) */
 	function addIntelPropertyFile(uint _nftID, bytes32 _digest, uint8 _hashFunction, uint8 _size, address[] calldata _rightsHolders, uint16[] calldata _rightsHolderTypes, uint _agreementID) external onlyOwner {
 		/** @dev requirement of onlyOwner is temp - in production, anyone who uploads will become an admin for that intelPropertyFile */		
 		require(_rightsHolders.length == _rightsHolderTypes.length, 'length of rightsHolders must match the length of rightsHolderTypes submitted');
 		
-		/** IMP: there is nothing to keep the same file from being tracked as an NFT multiple times. This could cause 
-		* issues, but may resolve itself in that everything is onchain and transparent in the case of a nefarious actor. 
-		* Further, plays/views of a file that exists as more than 1 NFT will simply be split between the NFTs in the case
-		* of an honest, mistaken re-upload. */
+		/** @dev
+		  * IMP: there is nothing to keep the same file from being tracked as an NFT multiple times. This could cause 
+		  * issues, but may resolve itself in that everything is onchain and transparent in the case of a nefarious actor. 
+		  * Further, plays/views of a file that exists as more than 1 NFT will simply be split between the NFTs in the case
+		  * of an honest, mistaken re-upload. 
+		*/
 
 		/** @dev using the incoming _nftID is needed for the various contracts to coordinate */
 		(IntelPropertyFile storage sdFile) = (intelPropertyFile[_nftID]);
@@ -89,8 +90,7 @@ contract IntelPropertyTokens is ERC20, Ownable {
 		mintTokensForIntelPropertyFile(_nftID);
 	}
 	
-	/** 
-	* @notice handles minting of the tokens specific to the IntelProperty file's ID supplied. 
+	/** @notice handles minting of the tokens specific to the IntelProperty file's ID supplied. 
 	  * 'intelPropertyTokenLimit' determines the # of tokens and this is divided by the # 
 	  * of rightsHolders assigned to the IntelProperty file. Any remainder (beyond the evenly
 	  * split # of tokens between rightsHolders) tokens will be assigned to the first 
