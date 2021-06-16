@@ -25,6 +25,7 @@
  
  
 ## Known Issues
- - Please note that this project is a learning project for me. I'm still somewhat inexperienced at writing smart contracts. As such, this project should not be considered production ready. It should be audited before being deployed outside of a testnet.
- - Some of the information I'm tracking on chain may be better handled off chain. I've attempted to create some efficienies in gas and resource usage by writing to the event logs when I could and also by storing IPFS hash information as efficient as I know how. I believe more research needs to be done to make this even more efficient.
+ - This project is in a very early stage of development and should not be considered production ready. It currently is not handling reception of ether or end user access. Further contracts needs to be added to facilitate this. 
+ - Steps need to be taken to handle known attack vectors.
+ - Some of the information I'm tracking on chain may be better handled off chain. I've attempted to create some efficienies in gas and resource usage by writing to the event logs when I could and also by storing IPFS hash information as efficient as I know how. I believe more research needs to be done to make the project more efficient.
  
