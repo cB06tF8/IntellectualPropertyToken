@@ -154,5 +154,22 @@ contract('IntelPropertyTokens', (accounts) => {
         expect(intelProperty.transferRightsHolderTokens(currentNFTIndex, accounts[0], accounts[1], 400)).to.eventually.be.rejected;
     });
     
-        
+    it('owner/admin should be able to activate tokens', async () => {
+        currentNFTIndex = new BN(0);
+        await setIPFSHash(currentNFTIndex, ipfsHashes[0]);
+
+        var active = false;
+        active = await intelProperty.getActiveFlag(currentNFTIndex); 
+        assert.equal(active, false);
+        await intelProperty.setActiveFlag(currentNFTIndex, true);
+        active = await intelProperty.getActiveFlag(currentNFTIndex);        
+        assert.equal(active, true);
+        await intelProperty.setActiveFlag(currentNFTIndex, false);
+        active = await intelProperty.getActiveFlag(currentNFTIndex);        
+        assert.equal(active, false);
+
+        /** @dev someone other than the owner.admin of this currentNFTIndex should not be able to change activation */
+        expect(intelProperty.setActiveFlag(currentNFTIndex, true, {from: accounts[1]})).to.eventually.be.rejected;
+
+    });        
 });

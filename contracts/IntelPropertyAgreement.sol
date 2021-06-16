@@ -40,13 +40,13 @@ contract IntelPropertyAgreement is Ownable {
 
 	/** @notice returns an IPFS hash by it's ID number. Note that the Multihash will need to be re-combined, 
 	  * (see ../util/multihash.js). */
-    function retrieveAgreement(uint _agreementID)  public view returns(Multihash memory) {
+    function retrieveAgreement(uint _agreementID)  public view returns(Multihash memory _agreement) {
 		(Multihash storage agreement) = (agreements[_agreementID]);
 		return agreement;
     }
 
 	/** @notice returns the total number of agreements present in the contract */
-	function getTotalAgreements() public view returns(uint) {
+	function getTotalAgreements() public view returns(uint _totalAgreements) {
 		return totalAgreements;
 	}
 }

@@ -19,28 +19,13 @@ contract IntelPropertyTokens is ERC20, Ownable {
 	uint intelPropertyTokenLimit = 1000; /** @dev should probably be 1000 (or 10000) x # of rightsHolderTypes. Using 1000 for this example. */
     address admin; /** @dev the idea of 'admin' will need to be expanded to become an admin for the IntelPropertyFile: whoever uploads ia the admin for that _nftID */
     
-	// temp for debugging
-	//event msgs(string _msg, address _addr);
-	//event msgsWithNums(string _msg, uint _number);
-
-	/* TODO
-	 * 1. Normal ERC20 transfer functions may need to be overridden so they don't work from external.
-	 * 2. Do we need a fallback func? How should this contract deal with the possibility of possibly
-	 * receiving funds, (being that it will probably be part of what will be a layer 2 solution)?
-	 * 3. Some kind of escrow feature or status may be needed (to hold tokens for a right's holder 
-	 * before their account exists, should an admin set up the contract before getting all parties
-	 * onboarded).
-	 * 4. 'onlyOwner' needs to be replaced with a whitelist of (probably) the owner + an 'admin' for
-	 * the tokens associated with the specific nftID.
-	 * 5. Owner may eventually reliquish all rights to the admin who uploads an intelProperty file.
-	*/
-    	constructor() ERC20("IntellectualPropertyToken", "IPT") { 
+   	constructor() ERC20("IntellectualPropertyToken", "IPT") { 
 		admin = msg.sender;
 	}
     
-    	struct IntelPropertyFile {
+	struct IntelPropertyFile {
 		address admin;
-        	Multihash ipfsHash;
+		Multihash ipfsHash;
 		bool active;
 		bool finalized;
 		RightsHolderSpec[] rightsHolderSpecs; 
@@ -105,13 +90,13 @@ contract IntelPropertyTokens is ERC20, Ownable {
 		for (uint16 i = 0; i < sdFile.rightsHolderSpecs.length; i++) {
 			uint amount = (i == 0 && modu > 0) ? numTokens + modu : numTokens;
 			(RightsHolderSpec storage rhSpec) = (sdFile.rightsHolderSpecs[i]);
-			_mint(rhSpec.rightsHolderAddr, amount);
 			rhSpec.tokensHeld = rhSpec.tokensHeld + amount;
+			_mint(rhSpec.rightsHolderAddr, amount);
 		}
 	}
 	
 	/** @notice controls the transfer of rightsHolder's tokens specific to the IntelProperty file ID supplied  */
-	function transferRightsHolderTokens(uint _nftID, address _rightsHolder, address _to, uint _amount) public returns (bool) {
+	function transferRightsHolderTokens(uint _nftID, address _rightsHolder, address _to, uint _amount) public returns (bool _retVal) {
 		/** @dev since solidity 0.7.0, you can't create a mapping inside of a struct, therefore we need to iterate
 		  * thru the rightsHolders, but there aren't many 
 		*/
@@ -121,20 +106,21 @@ contract IntelPropertyTokens is ERC20, Ownable {
 			if (rhSpec.rightsHolderAddr == _rightsHolder) {
 				require(msg.sender == _rightsHolder || msg.sender == admin, "msg.sender is not authorized.");
 				require(rhSpec.tokensHeld >= _amount, "RightsHolder does not have enough tokens.");
-				transferFrom(_rightsHolder, _to, _amount);
-				return true;
+				bool retVal = transferFrom(_rightsHolder, _to, _amount);
+				require(retVal == true, 'unable to transfer');
+				return retVal;
 			}
 		}		
 	}
 
 	/** @notice returns the IPFS multihash address for the IntelProperty file's content */
-	function retrieveIntelPropertyFile(uint _nftID) public view returns(Multihash memory) {
+	function retrieveIntelPropertyFile(uint _nftID) public view returns(Multihash memory _intelPropFile) {
 		(IntelPropertyFile storage sdFile) = (intelPropertyFile[_nftID]);
 		return sdFile.ipfsHash;
 	}
 	
 	/** @notice returns the rightsHolder information for the IntelProperty file requested */
-	function retrieveRightsHolderInfo(uint _nftID) external view returns(RightsHolderSpec[] memory) {
+	function retrieveRightsHolderInfo(uint _nftID) external view returns(RightsHolderSpec[] memory _rightsHolder) {
 		(IntelPropertyFile storage sdFile) = (intelPropertyFile[_nftID]);
 		return sdFile.rightsHolderSpecs;
 	}
@@ -149,8 +135,8 @@ contract IntelPropertyTokens is ERC20, Ownable {
 		(IntelPropertyFile storage sdFile) = (intelPropertyFile[_nftID]);
 		sdFile.active = _active;
 	}
-	/** @notice retrieves the IntelProperty file's active flag, used for controling visibility of the contents */
-	function getActiveFlag(uint _nftID) external returns(bool) {
+	/** @notice retrieves the IntelProperty file's active flag, used for controlling visibility of the contents */
+	function getActiveFlag(uint _nftID) external view returns(bool _active) {
 		(IntelPropertyFile storage sdFile) = (intelPropertyFile[_nftID]);
 		return sdFile.active;
 	}
@@ -163,7 +149,7 @@ contract IntelPropertyTokens is ERC20, Ownable {
 		sdFile.finalized = true;
 	}
 	/** @notice returns Finalized status for this IntelProperty file */
-	function getFinalizedFlag(uint _nftID) external returns(bool) {
+	function getFinalizedFlag(uint _nftID) external view returns(bool _finalized) {
 		(IntelPropertyFile storage sdFile) = (intelPropertyFile[_nftID]);
 		return sdFile.finalized;
 	}

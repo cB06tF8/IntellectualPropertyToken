@@ -73,7 +73,7 @@ contract('IntelPropertyNFT', (accounts) => {
         })
     })
 
-    /** @dev test of minting the tokens */
+    /** @dev test adding of thumbnail art and plays for tokens */
     describe('adding thumbnail art, plays, and creating events', async () => {
         it('creates a new token', async () => { 
             var nameBytes = await ethers.utils.formatBytes32String('Her Smile');
